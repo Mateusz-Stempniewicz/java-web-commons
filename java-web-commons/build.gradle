@@ -1,0 +1,76 @@
+buildscript {
+	ext {
+		springBootVersion = '1.5.9.RELEASE'
+	}
+    repositories {
+        mavenCentral()
+        mavenLocal()
+    }
+    dependencies {
+        classpath("org.springframework.boot:spring-boot-gradle-plugin:${springBootVersion}")
+    }
+}
+
+apply plugin: 'java'
+apply plugin: 'org.springframework.boot'
+apply plugin: 'maven-publish'
+apply plugin: 'eclipse'
+apply plugin: 'maven'
+
+jar {
+    baseName = 'java-web-commons'
+    version =  '0.1.0-SNAPSHOT'
+}
+
+repositories {
+    mavenCentral()
+    mavenLocal()
+    maven {
+        url "http://192.168.200.201:9998/repository/snapshots/"
+    }
+}
+
+sourceCompatibility = 1.8
+targetCompatibility = 1.8
+
+dependencies {
+    compile group: 'org.springframework.boot', name: 'spring-boot-starter-web', version: springBootVersion
+    
+    testCompile("junit:junit")
+}
+
+task sourceJar(type: Jar) {
+  from sourceSets.main.allJava
+  classifier "sources"
+}
+
+publishing {
+    publications {
+        mavenJava(MavenPublication) {
+            groupId 'com.java.web'
+            artifactId 'java-web-commons'
+            version jar.version
+            
+            from components.java
+            artifact tasks.sourceJar
+        }
+    }
+    
+    repositories {
+        maven {
+            credentials {
+              if (project.hasProperty("USERNAME")) {
+                username USERNAME
+              }
+              if (project.hasProperty("PASSWORD")) {
+                password PASSWORD
+              }
+            }
+            
+            if (jar.version.endsWith('-SNAPSHOT'))
+              url "http://192.168.200.201:9998/repository/snapshots/"
+            else
+              url "http://192.168.200.201:9998/repository/internal/"
+        }
+    }
+}
