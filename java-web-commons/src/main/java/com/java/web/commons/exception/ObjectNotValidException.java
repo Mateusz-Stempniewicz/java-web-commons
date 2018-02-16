@@ -1,6 +1,7 @@
 package com.java.web.commons.exception;
 
 import org.springframework.validation.Errors;
+import com.java.web.commons.api.handler.ValidationErrorHandler;
 
 /**
  * Wyjątek zwracany przez {@link ValidationErrorHandler} w momencie gdy obiekt
